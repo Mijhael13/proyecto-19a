@@ -20,7 +20,6 @@ class UserPreferences(context: Context) {
             putFloat("weight", userProfile.weight)
             putFloat("height", userProfile.height)
             putStringSet("availableDays", userProfile.availableDays.toSet())
-            putInt("score", userProfile.score) // Guardar puntaje
             apply() // Guardar los cambios
         }
     }
@@ -37,8 +36,7 @@ class UserPreferences(context: Context) {
         val weight = sharedPreferences.getFloat("weight", 0f)
         val height = sharedPreferences.getFloat("height", 0f)
         val availableDays = sharedPreferences.getStringSet("availableDays", emptySet())?.toList() ?: emptyList()
-        val score = sharedPreferences.getInt("score", 0) // Leer puntaje
 
-        return UserProfile(name, age, sex, muscleGroup, mainGoal, motivation, activityLevel, weight, height, availableDays, score)
+        return UserProfile(name, age, sex, muscleGroup, mainGoal, motivation, activityLevel, weight, height, availableDays)
     }
 }

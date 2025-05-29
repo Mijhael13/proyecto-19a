@@ -13,58 +13,64 @@ import androidx.compose.foundation.verticalScroll
 import com.example.prueba19a.models.UserProfile
 import com.example.prueba19a.utils.UserPreferences
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.background
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.TextField
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserDataScreen(
     onDataSubmitted: (UserProfile) -> Unit
 ) {
+    val context = LocalContext.current
+    val userPreferences = UserPreferences(context)
+
     var name by remember { mutableStateOf("") }
     var age by remember { mutableStateOf("") }
     var fitnessLevel by remember { mutableStateOf("") }
     var sex by remember { mutableStateOf("") }
-    var muscleGroup by remember { mutableStateOf("") }
     var mainGoal by remember { mutableStateOf("") }
     var motivation by remember { mutableStateOf("") }
     var activityLevel by remember { mutableStateOf("") }
     var weight by remember { mutableStateOf("") }
     var height by remember { mutableStateOf("") }
-    var availableDays by remember { mutableStateOf(listOf<String>()) }
     var expandedSex by remember { mutableStateOf(false) }
-    var expandedMuscleGroup by remember { mutableStateOf(false) }
-    var expandedMainGoal by remember { mutableStateOf(false) }
     var expandedMotivation by remember { mutableStateOf(false) }
     var expandedActivityLevel by remember { mutableStateOf(false) }
     var profileMenuExpanded by remember { mutableStateOf(false) }
-    var score by remember { mutableStateOf(0) } // Nuevo: puntaje acumulado
+    var score by remember { mutableStateOf(0) }
 
     val fitnessLevels = listOf("Principiante", "Intermedio", "Avanzado")
     val sexes = listOf("Masculino", "Femenino", "Otro")
-    val muscleGroups = listOf("Pecho", "Espalda", "Piernas", "Hombros", "Brazos", "Abdomen")
     val mainGoals = listOf("Pérdida de peso", "Aumento de masa muscular", "Mejora de resistencia")
-    val motivations = listOf("Liberar estrés", "Mejorar salud", "Confianza en mí")
     val activityLevels = listOf("Sedentario", "Moderado", "Activo")
-    val daysOfWeek = listOf("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo")
+    val objetivos = listOf("Aumentar peso", "Aumentar músculo", "Mantenerse en forma")
 
-    val context = LocalContext.current
-    val userPreferences = UserPreferences(context)
+    var objetivo by remember { mutableStateOf("") }
+    var expandedObjetivo by remember { mutableStateOf(false) }
+    var expandedFitnessLevel by remember { mutableStateOf(false) }
+    var expandedSexCombo by remember { mutableStateOf(false) }
+    var expandedMainGoalCombo by remember { mutableStateOf(false) }
+    var expandedActivityLevelCombo by remember { mutableStateOf(false) }
 
-    // Ejemplo de puntaje por selección
-    // Puedes ajustar los valores según la importancia de cada pregunta
     fun updateScore() {
         score = 0
         if (fitnessLevel == "Intermedio") score += 2
         if (fitnessLevel == "Avanzado") score += 3
         if (mainGoal == "Aumento de masa muscular") score += 2
         if (mainGoal == "Mejora de resistencia") score += 1
-        if (motivation == "Mejorar salud") score += 1
+        if (objetivo == "Aumentar músculo") score += 2
+        if (objetivo == "Aumentar peso") score += 1
+        if (objetivo == "Mantenerse en forma") score += 1
         if (activityLevel == "Activo") score += 2
         if (weight.toFloatOrNull() ?: 0f > 80) score += 1
         if (height.toFloatOrNull() ?: 0f > 170) score += 1
-        score += availableDays.size // 1 punto por cada día disponible
+        // score += availableDays.size // Eliminar esta línea ya que no se usa availableDays
     }
 
-    // Llama a updateScore cada vez que cambie una respuesta relevante
-    LaunchedEffect(fitnessLevel, mainGoal, motivation, activityLevel, weight, height, availableDays) {
+    LaunchedEffect(fitnessLevel, mainGoal, objetivo, activityLevel, weight, height) {
         updateScore()
     }
 
@@ -92,128 +98,105 @@ fun UserDataScreen(
         )
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Menú desplegable para el sexo
-        OutlinedButton(onClick = { expandedSex = true }) {
-            Text(text = if (sex.isEmpty()) "Selecciona el sexo" else sex)
-        }
-        DropdownMenu(
-            expanded = expandedSex,
-            onDismissRequest = { expandedSex = false }
+        // Eliminar ComboBox para nivel de condición física
+
+        // ComboBox para sexo
+        Text("Sexo")
+        ExposedDropdownMenuBox(
+            expanded = expandedSexCombo,
+            onExpandedChange = { expandedSexCombo = !expandedSexCombo }
         ) {
-            sexes.forEach { option ->
-                DropdownMenuItem(
-                    text = { Text(option) },
-                    onClick = {
-                        sex = option
-                        expandedSex = false
-                    }
-                )
+            TextField(
+                value = if (sex.isEmpty()) "Selecciona tu sexo" else sex,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Sexo") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSexCombo) },
+                modifier = Modifier.menuAnchor().fillMaxWidth()
+            )
+            ExposedDropdownMenu(
+                expanded = expandedSexCombo,
+                onDismissRequest = { expandedSexCombo = false }
+            ) {
+                sexes.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = {
+                            sex = option
+                            expandedSexCombo = false
+                        },
+                        modifier = if (sex == option) Modifier.background(Color(0xFF4CAF50)) else Modifier
+                    )
+                }
             }
         }
-
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Menú desplegable para el grupo muscular
-        OutlinedButton(onClick = { expandedMuscleGroup = true }) {
-            Text(text = if (muscleGroup.isEmpty()) "Selecciona el grupo muscular" else muscleGroup)
-        }
-        DropdownMenu(
-            expanded = expandedMuscleGroup,
-            onDismissRequest = { expandedMuscleGroup = false }
+        // ComboBox para objetivo personalizado
+        Text("¿Cuál es tu objetivo?")
+        ExposedDropdownMenuBox(
+            expanded = expandedObjetivo,
+            onExpandedChange = { expandedObjetivo = !expandedObjetivo }
         ) {
-            muscleGroups.forEach { option ->
-                DropdownMenuItem(
-                    text = { Text(option) },
-                    onClick = {
-                        muscleGroup = option
-                        expandedMuscleGroup = false
-                    }
-                )
+            TextField(
+                value = if (objetivo.isEmpty()) "Selecciona tu objetivo" else objetivo,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Objetivo") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedObjetivo) },
+                modifier = Modifier.menuAnchor().fillMaxWidth()
+            )
+            ExposedDropdownMenu(
+                expanded = expandedObjetivo,
+                onDismissRequest = { expandedObjetivo = false }
+            ) {
+                objetivos.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = {
+                            objetivo = option
+                            expandedObjetivo = false
+                        },
+                        modifier = if (objetivo == option) Modifier.background(Color(0xFF4CAF50)) else Modifier
+                    )
+                }
             }
         }
-
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Menú desplegable para el objetivo principal
-        OutlinedButton(onClick = { expandedMainGoal = true }) {
-            Text(text = if (mainGoal.isEmpty()) "Selecciona el objetivo principal" else mainGoal)
-        }
-        DropdownMenu(
-            expanded = expandedMainGoal,
-            onDismissRequest = { expandedMainGoal = false }
+        // ComboBox para nivel de actividad
+        Text("Nivel de actividad")
+        ExposedDropdownMenuBox(
+            expanded = expandedActivityLevelCombo,
+            onExpandedChange = { expandedActivityLevelCombo = !expandedActivityLevelCombo }
         ) {
-            mainGoals.forEach { option ->
-                DropdownMenuItem(
-                    text = { Text(option) },
-                    onClick = {
-                        mainGoal = option
-                        expandedMainGoal = false
-                    }
-                )
+            TextField(
+                value = if (activityLevel.isEmpty()) "Selecciona el nivel de actividad" else activityLevel,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Nivel de actividad") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedActivityLevelCombo) },
+                modifier = Modifier.menuAnchor().fillMaxWidth()
+            )
+            ExposedDropdownMenu(
+                expanded = expandedActivityLevelCombo,
+                onDismissRequest = { expandedActivityLevelCombo = false }
+            ) {
+                activityLevels.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = {
+                            activityLevel = option
+                            expandedActivityLevelCombo = false
+                        },
+                        modifier = if (activityLevel == option) Modifier.background(Color(0xFF4CAF50)) else Modifier
+                    )
+                }
             }
         }
-
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Menú desplegable para la motivación
-        OutlinedButton(onClick = { expandedMotivation = true }) {
-            Text(text = if (motivation.isEmpty()) "Selecciona la motivación" else motivation)
-        }
-        DropdownMenu(
-            expanded = expandedMotivation,
-            onDismissRequest = { expandedMotivation = false }
-        ) {
-            motivations.forEach { option ->
-                DropdownMenuItem(
-                    text = { Text(option) },
-                    onClick = {
-                        motivation = option
-                        expandedMotivation = false
-                    }
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Menú desplegable para el nivel de actividad
-        OutlinedButton(onClick = { expandedActivityLevel = true }) {
-            Text(text = if (activityLevel.isEmpty()) "Selecciona el nivel de actividad" else activityLevel)
-        }
-        DropdownMenu(
-            expanded = expandedActivityLevel,
-            onDismissRequest = { expandedActivityLevel = false }
-        ) {
-            activityLevels.forEach { option ->
-                DropdownMenuItem(
-                    text = { Text(option) },
-                    onClick = {
-                        activityLevel = option
-                        expandedActivityLevel = false
-                    }
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Checkbox para los días disponibles
-        Text("Días disponibles para objetivos:")
-        daysOfWeek.forEach { day ->
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(
-                    checked = availableDays.contains(day),
-                    onCheckedChange = {
-                        if (it) {
-                            availableDays = availableDays + day
-                        } else {
-                            availableDays = availableDays - day
-                        }
-                    }
-                )
-                Text(day)
-            }
-        }
+        // Eliminar el apartado de los días disponibles
 
         Spacer(modifier = Modifier.height(8.dp))
         TextField(
@@ -237,16 +220,17 @@ fun UserDataScreen(
                 name = name,
                 age = age.toIntOrNull() ?: 0,
                 sex = sex,
-                muscleGroup = muscleGroup,
+                muscleGroup = "",
                 mainGoal = mainGoal,
-                motivation = motivation,
+                motivation = objetivo,
                 activityLevel = activityLevel,
                 weight = weight.toFloatOrNull() ?: 0f,
                 height = height.toFloatOrNull() ?: 0f,
-                availableDays = availableDays
+                availableDays = emptyList(), // Ahora siempre vacío
+                score = score
             )
             userPreferences.saveUserProfile(userProfile)
-            onDataSubmitted(userProfile.copy(score = score)) // Pasar el puntaje
+            onDataSubmitted(userProfile)
         }) {
             Text("Enviar")
         }

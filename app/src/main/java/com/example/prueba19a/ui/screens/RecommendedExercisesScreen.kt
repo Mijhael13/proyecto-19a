@@ -21,11 +21,14 @@ fun RecommendedExercisesScreen(
     userActivityLevel: String,
     userWeight: Float,
     userHeight: Float,
-    score: Int, // Nuevo: mostrar puntaje
     onBack: () -> Unit
 ) {
     // Estado para controlar la visibilidad de los datos del usuario
     var showUserProfile by remember { mutableStateOf(false) }
+
+    // Tabs para grupos musculares
+    val muscleTabs = listOf("Pierna", "Brazos", "Cardio", "Pecho", "Abdomen")
+    var selectedTabIndex by remember { mutableStateOf(0) }
 
     Column(
         modifier = Modifier
@@ -46,7 +49,20 @@ fun RecommendedExercisesScreen(
 
         Text(text = "Ejercicios Recomendados", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = exercises, style = MaterialTheme.typography.bodyLarge)
+
+        // Menú de navegación de grupos musculares
+        TabRow(selectedTabIndex = selectedTabIndex) {
+            muscleTabs.forEachIndexed { index, title ->
+                Tab(
+                    selected = selectedTabIndex == index,
+                    onClick = { selectedTabIndex = index },
+                    text = { Text(title) }
+                )
+            }
+        }
+
+        // Contenido de la rutina según la pestaña seleccionada
+        Text(getRoutine(muscleTabs[selectedTabIndex], userMainGoal), style = MaterialTheme.typography.bodyLarge)
         Spacer(modifier = Modifier.height(16.dp))
 
         // Mostrar información del perfil del usuario solo si showUserProfile es true
@@ -64,13 +80,34 @@ fun RecommendedExercisesScreen(
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        // Mostrar puntaje total
-        Text(text = "Puntaje total: $score", style = MaterialTheme.typography.bodyMedium)
-        Spacer(modifier = Modifier.height(8.dp))
-
         // Cambiar el texto del botón según la visibilidad del perfil
         Button(onClick = onBack) {
             Text(if (showUserProfile) "Modificar Datos" else "Volver")
         }
+    }
+}
+
+// Función para obtener la rutina según el grupo muscular y el puntaje
+fun getRoutine(muscleGroup: String, score: String): String {
+    return when (muscleGroup) {
+        "Pierna" -> """
+Principiante
+
+Sentadillas
+3 series de 10-12 reps
+
+Zancadas
+3 series de 8-10 reps por pierna
+
+Puente de Glúteos
+3 series de 12-15 reps
+
+Saltos bipodales
+3 series de 15-20 reps
+
+Elevación de talones
+3 series de 15-20 reps
+""".trimIndent()
+        else -> "Rutina de $muscleGroup con puntaje $score"
     }
 }
