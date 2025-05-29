@@ -28,6 +28,7 @@ class MainActivity : ComponentActivity() {
     private var activityLevel by mutableStateOf("")
     private var weight by mutableStateOf(0f)
     private var height by mutableStateOf(0f)
+    private var lesion by mutableStateOf("") // <-- Agregar variable de lesión
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +52,7 @@ class MainActivity : ComponentActivity() {
                     activityLevel = userProfile.activityLevel
                     weight = userProfile.weight
                     height = userProfile.height
+                    lesion = userProfile.lesion // <-- Obtener lesión del perfil guardado
                     currentScreen = "recommendedExercises"
                 }
 
@@ -58,7 +60,7 @@ class MainActivity : ComponentActivity() {
                     when (currentScreen) {
                         "userData" -> {
                             UserDataScreen(
-                                onDataSubmitted = { profile ->
+                                onDataSubmitted = { profile, lesion ->
                                     // Actualiza los datos del usuario en MainActivity
                                     name = profile.name
                                     age = profile.age
@@ -69,6 +71,7 @@ class MainActivity : ComponentActivity() {
                                     activityLevel = profile.activityLevel
                                     weight = profile.weight
                                     height = profile.height
+                                    this.lesion = lesion // Guardar la lesión seleccionada
                                     recommendedExercises = recommendExercises(profile.mainGoal)
                                     currentScreen = "recommendedExercises"
                                 }
@@ -86,6 +89,7 @@ class MainActivity : ComponentActivity() {
                                 userActivityLevel = activityLevel,
                                 userWeight = weight,
                                 userHeight = height,
+                                lesion = lesion, // <-- Pasar el valor de lesión
                                 onBack = { currentScreen = "userData" }
                             )
                         }

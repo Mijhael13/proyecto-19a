@@ -11,5 +11,8 @@ data class UserProfile(
     val weight: Float,
     val height: Float,
     val availableDays: List<String>,
-    val score: Int = 0 // Asegura que el parámetro score tenga valor por defecto
+    val score: Int = 0, // Asegura que el parámetro score tenga valor por defecto
+    val lesion: String = "",
+    val enfermedad: String = "",
+    val dificultadMedica: String = ""
 )

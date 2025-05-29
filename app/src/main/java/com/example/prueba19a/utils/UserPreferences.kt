@@ -20,6 +20,10 @@ class UserPreferences(context: Context) {
             putFloat("weight", userProfile.weight)
             putFloat("height", userProfile.height)
             putStringSet("availableDays", userProfile.availableDays.toSet())
+            putInt("score", userProfile.score)
+            putString("lesion", userProfile.lesion)
+            putString("enfermedad", userProfile.enfermedad)
+            putString("dificultadMedica", userProfile.dificultadMedica)
             apply() // Guardar los cambios
         }
     }
@@ -36,7 +40,11 @@ class UserPreferences(context: Context) {
         val weight = sharedPreferences.getFloat("weight", 0f)
         val height = sharedPreferences.getFloat("height", 0f)
         val availableDays = sharedPreferences.getStringSet("availableDays", emptySet())?.toList() ?: emptyList()
+        val score = sharedPreferences.getInt("score", 0)
+        val lesion = sharedPreferences.getString("lesion", "") ?: ""
+        val enfermedad = sharedPreferences.getString("enfermedad", "") ?: ""
+        val dificultadMedica = sharedPreferences.getString("dificultadMedica", "") ?: ""
 
-        return UserProfile(name, age, sex, muscleGroup, mainGoal, motivation, activityLevel, weight, height, availableDays)
+        return UserProfile(name, age, sex, muscleGroup, mainGoal, motivation, activityLevel, weight, height, availableDays, score, lesion, enfermedad, dificultadMedica)
     }
 }

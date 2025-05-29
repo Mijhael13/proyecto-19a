@@ -22,7 +22,7 @@ import androidx.compose.material3.TextField
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserDataScreen(
-    onDataSubmitted: (UserProfile) -> Unit
+    onDataSubmitted: (UserProfile, String) -> Unit // <-- Recibe también la lesión
 ) {
     val context = LocalContext.current
     val userPreferences = UserPreferences(context)
@@ -55,6 +55,31 @@ fun UserDataScreen(
     var expandedMainGoalCombo by remember { mutableStateOf(false) }
     var expandedActivityLevelCombo by remember { mutableStateOf(false) }
 
+    var lesion by remember { mutableStateOf("") }
+    var expandedLesion by remember { mutableStateOf(false) }
+    val opcionesLesion = listOf(
+        "No",
+        "Esguince",
+        "Recuperación de fracturas",
+        "Luxaciones",
+        "Lesiones de meniscos"
+    )
+
+    var enfermedad by remember { mutableStateOf("") }
+    var expandedEnfermedad by remember { mutableStateOf(false) }
+    val opcionesEnfermedad = listOf(
+        "No",
+        "Obesidad"
+    )
+
+    var dificultadMedica by remember { mutableStateOf("") }
+    var expandedDificultadMedica by remember { mutableStateOf(false) }
+    val opcionesDificultadMedica = listOf(
+        "No",
+        "Tendinitis",
+        "Problemas de espalda"
+    )
+
     fun updateScore() {
         score = 0
         if (fitnessLevel == "Intermedio") score += 2
@@ -64,21 +89,58 @@ fun UserDataScreen(
         if (objetivo == "Aumentar músculo") score += 2
         if (objetivo == "Aumentar peso") score += 1
         if (objetivo == "Mantenerse en forma") score += 1
-        if (activityLevel == "Activo") score += 2
-        if (weight.toFloatOrNull() ?: 0f > 80) score += 1
-        if (height.toFloatOrNull() ?: 0f > 170) score += 1
-        // score += availableDays.size // Eliminar esta línea ya que no se usa availableDays
+        // Puntaje por nivel de actividad
+        score += when (activityLevel) {
+            "Sedentario" -> 0
+            "Moderado" -> 3
+            "Activo" -> 5
+            else -> 0
+        }
+        // Puntaje por lesión
+        score += when (lesion) {
+            "No" -> 1
+            else -> 0
+        }
+        // Puntaje por enfermedad
+        score += when (enfermedad) {
+            "No" -> 1
+            else -> 0
+        }
+        // Puntaje por dificultad médica
+        score += when (dificultadMedica) {
+            "No" -> 1
+            else -> 0
+        }
+        // Nuevo cálculo de puntaje por peso SOLO si el campo no está vacío y es válido
+        val peso = weight.toFloatOrNull()
+        if (peso != null) {
+            score += when {
+                peso <= 49f -> 1
+                peso in 50f..65f -> 3
+                peso in 66f..90f -> 2
+                peso >= 91f -> 1
+                else -> 0
+            }
+        }
+        // Nuevo cálculo de puntaje por altura
+        val altura = height.toFloatOrNull() ?: 0f
+        if (altura >= 171f) score += 1
+
+        // Puntaje por edad
+        val edadInt = age.toIntOrNull() ?: 0
+        if (edadInt >= 16) score += 1
     }
 
-    LaunchedEffect(fitnessLevel, mainGoal, objetivo, activityLevel, weight, height) {
+    LaunchedEffect(fitnessLevel, mainGoal, objetivo, activityLevel, weight, height, lesion, enfermedad, dificultadMedica) {
         updateScore()
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .padding(start = 24.dp, end = 24.dp, top = 48.dp, bottom = 24.dp)
+            .background(MaterialTheme.colorScheme.surface),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -125,7 +187,7 @@ fun UserDataScreen(
                             sex = option
                             expandedSexCombo = false
                         },
-                        modifier = if (sex == option) Modifier.background(Color(0xFF4CAF50)) else Modifier
+                        modifier = if (sex == option) Modifier.background(Color(0xFF1A98B8)) else Modifier
                     )
                 }
             }
@@ -157,7 +219,7 @@ fun UserDataScreen(
                             objetivo = option
                             expandedObjetivo = false
                         },
-                        modifier = if (objetivo == option) Modifier.background(Color(0xFF4CAF50)) else Modifier
+                        modifier = if (objetivo == option) Modifier.background(Color(0xFF1A98B8)) else Modifier
                     )
                 }
             }
@@ -189,7 +251,7 @@ fun UserDataScreen(
                             activityLevel = option
                             expandedActivityLevelCombo = false
                         },
-                        modifier = if (activityLevel == option) Modifier.background(Color(0xFF4CAF50)) else Modifier
+                        modifier = if (activityLevel == option) Modifier.background(Color(0xFF1A98B8)) else Modifier
                     )
                 }
             }
@@ -212,26 +274,130 @@ fun UserDataScreen(
             label = { Text("Altura (cm)") },
             modifier = Modifier.fillMaxWidth()
         )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // ComboBox para lesión
+        Text("¿Posees una lesión?")
+        ExposedDropdownMenuBox(
+            expanded = expandedLesion,
+            onExpandedChange = { expandedLesion = !expandedLesion }
+        ) {
+            TextField(
+                value = if (lesion.isEmpty()) "Selecciona una opción" else lesion,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Lesión") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedLesion) },
+                modifier = Modifier.menuAnchor().fillMaxWidth()
+            )
+            ExposedDropdownMenu(
+                expanded = expandedLesion,
+                onDismissRequest = { expandedLesion = false }
+            ) {
+                opcionesLesion.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = {
+                            lesion = option
+                            expandedLesion = false
+                        },
+                        modifier = if (lesion == option) Modifier.background(Color(0xFF1A98B8)) else Modifier
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // ComboBox para enfermedad
+        Text("¿Posees alguna enfermedad?")
+        ExposedDropdownMenuBox(
+            expanded = expandedEnfermedad,
+            onExpandedChange = { expandedEnfermedad = !expandedEnfermedad }
+        ) {
+            TextField(
+                value = if (enfermedad.isEmpty()) "Selecciona una opción" else enfermedad,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Enfermedad") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedEnfermedad) },
+                modifier = Modifier.menuAnchor().fillMaxWidth()
+            )
+            ExposedDropdownMenu(
+                expanded = expandedEnfermedad,
+                onDismissRequest = { expandedEnfermedad = false }
+            ) {
+                opcionesEnfermedad.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = {
+                            enfermedad = option
+                            expandedEnfermedad = false
+                        },
+                        modifier = if (enfermedad == option) Modifier.background(Color(0xFF1A98B8)) else Modifier
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // ComboBox para dificultad médica
+        Text("¿Posees alguna dificultad médica?")
+        ExposedDropdownMenuBox(
+            expanded = expandedDificultadMedica,
+            onExpandedChange = { expandedDificultadMedica = !expandedDificultadMedica }
+        ) {
+            TextField(
+                value = if (dificultadMedica.isEmpty()) "Selecciona una opción" else dificultadMedica,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Dificultad médica") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedDificultadMedica) },
+                modifier = Modifier.menuAnchor().fillMaxWidth()
+            )
+            ExposedDropdownMenu(
+                expanded = expandedDificultadMedica,
+                onDismissRequest = { expandedDificultadMedica = false }
+            ) {
+                opcionesDificultadMedica.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = {
+                            dificultadMedica = option
+                            expandedDificultadMedica = false
+                        },
+                        modifier = if (dificultadMedica == option) Modifier.background(Color(0xFF1A98B8)) else Modifier
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+
         Spacer(modifier = Modifier.height(16.dp))
         Text("Puntaje acumulado: $score", style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = {
-            val userProfile = UserProfile(
-                name = name,
-                age = age.toIntOrNull() ?: 0,
-                sex = sex,
-                muscleGroup = "",
-                mainGoal = mainGoal,
-                motivation = objetivo,
-                activityLevel = activityLevel,
-                weight = weight.toFloatOrNull() ?: 0f,
-                height = height.toFloatOrNull() ?: 0f,
-                availableDays = emptyList(), // Ahora siempre vacío
-                score = score
-            )
-            userPreferences.saveUserProfile(userProfile)
-            onDataSubmitted(userProfile)
-        }) {
+        Button(
+            onClick = {
+                val userProfile = UserProfile(
+                    name = name,
+                    age = age.toIntOrNull() ?: 0,
+                    sex = sex,
+                    muscleGroup = "",
+                    mainGoal = mainGoal,
+                    motivation = objetivo,
+                    activityLevel = activityLevel,
+                    weight = weight.toFloatOrNull() ?: 0f,
+                    height = height.toFloatOrNull() ?: 0f,
+                    availableDays = emptyList(), // Ahora siempre vacío
+                    score = score,
+                    lesion = lesion,
+                    enfermedad = enfermedad,
+                    dificultadMedica = dificultadMedica
+                )
+                userPreferences.saveUserProfile(userProfile)
+                onDataSubmitted(userProfile, lesion) // <-- Pasar lesion al callback
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A98B8))
+        ) {
             Text("Enviar")
         }
     }
