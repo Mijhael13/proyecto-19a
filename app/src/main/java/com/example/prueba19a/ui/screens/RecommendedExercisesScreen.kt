@@ -34,7 +34,8 @@ fun RecommendedExercisesScreen(
 
     // Tabs para grupos musculares
     val baseMuscleTabs = listOf("Pierna", "Brazos", "Cardio", "Pecho", "Abdominales")
-    val muscleTabs = if (lesion == "Esguince") baseMuscleTabs + "Lesiones" else baseMuscleTabs
+    val showLesionesTab = lesion == "Esguince" || lesion == "Recuperación de fracturas" || lesion == "Luxaciones"
+    val muscleTabs = if (showLesionesTab) baseMuscleTabs + "Lesiones" else baseMuscleTabs
     var selectedTabIndex by remember { mutableStateOf(0) }
     val scrollState = rememberScrollState()
 
@@ -73,8 +74,10 @@ fun RecommendedExercisesScreen(
         Spacer(modifier = Modifier.height(16.dp)) // Padding entre tabs y contenido
         // Contenido de la rutina según la pestaña seleccionada
         if (muscleTabs[selectedTabIndex] == "Lesiones") {
-            Text(
-                """
+            when (lesion) {
+                "Esguince" -> {
+                    Text(
+                        """
 Ejercicios para la Recuperación de Esguinces
 
 1. Movilidad Articular
@@ -97,8 +100,86 @@ Ejercicio: De pie, levanta lentamente los talones del suelo y mantenlos en esa p
 Descripción: Mejora la estabilidad.
 Ejercicio: Párate sobre una pierna (la no afectada) durante 10-30 segundos. Si te sientes seguro, intenta hacerlo con los ojos cerrados.
 """.trimIndent(),
-                style = MaterialTheme.typography.bodyLarge
-            )
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+                "Recuperación de fracturas" -> {
+                    Text(
+                        """
+Ejercicios para la Recuperación de Fracturas
+
+1. Movilidad Articular Suave
+Descripción: Mueve suavemente la articulación cercana a la fractura.
+Ejercicio:
+Si la fractura es en el brazo, mueve suavemente los dedos y la muñeca.
+Si es en la pierna, mueve los dedos del pie y el tobillo.
+
+2. Estiramientos Isométricos
+Descripción: Fortalece los músculos sin mover la articulación afectada.
+Ejercicio:
+Presiona suavemente el brazo o la pierna contra una superficie (como una pared) sin moverlo. Mantén la presión durante 5-10 segundos y relaja.
+
+3. Elevación de Miembros
+Descripción: Reduce la hinchazón y mejora la circulación.
+Ejercicio:
+Si tienes una fractura en la pierna, eleva la pierna sobre una almohada mientras estás acostado o sentado.
+
+4. Ejercicios de Respiración Profunda
+Descripción: Mejora la circulación y ayuda a la recuperación general.
+Ejercicio:
+Siéntate o acuéstate cómodamente y respira profundamente, llenando tus pulmones de aire. Mantén la respiración durante unos segundos y exhala lentamente.
+
+5. Caminar (si está permitido)
+Descripción: Mejora la movilidad y la circulación.
+Ejercicio:
+Si tu médico lo permite, comienza a caminar con apoyo (muletas o un andador) para mantener la movilidad.
+
+6. Flexiones de Tobillo (si es en la pierna)
+Descripción: Mejora la movilidad del tobillo.
+Ejercicio:
+Siéntate con la pierna estirada y mueve el tobillo hacia arriba y hacia abajo suavemente.
+""".trimIndent(),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+                "Luxaciones" -> {
+                    Text(
+                        """
+Ejercicios para la Recuperación de Luxaciones
+
+1. Movilidad Suave
+Descripción: Mejora la movilidad de la articulación afectada sin forzar.
+Ejercicio:
+Para el hombro: Siéntate o párate y deja que el brazo afectado cuelgue. Mueve suavemente el brazo en círculos pequeños en ambas direcciones.
+Para el tobillo: Siéntate y mueve el tobillo hacia arriba y hacia abajo, y realiza movimientos circulares.
+
+2. Estiramientos Suaves
+Descripción: Alivia la tensión en los músculos alrededor de la articulación.
+Ejercicio:
+Hombro: Lleva el brazo afectado hacia el lado opuesto del cuerpo, usando la otra mano para ayudar suavemente. Mantén la posición durante 15-30 segundos.
+Tobillo: Estira el pie hacia arriba y hacia abajo mientras estás sentado.
+
+3. Fortalecimiento Isométrico
+Descripción: Fortalece los músculos sin mover la articulación.
+Ejercicio:
+Hombro: Presiona la palma de la mano contra una pared o superficie sólida sin mover el brazo. Mantén durante 5-10 segundos.
+Tobillo: Presiona el pie contra una superficie suave (como una almohada) sin moverlo. Mantén durante 5-10 segundos.
+
+4. Ejercicios de Equilibrio
+Descripción: Mejora la estabilidad general.
+Ejercicio:
+Tobillo: Párate sobre una pierna (la no afectada) y mantén el equilibrio durante 10-30 segundos. Si te sientes seguro, intenta hacerlo con los ojos cerrados.
+
+5. Movimientos de Flexión y Extensión
+Descripción: Mejora la movilidad y la fuerza.
+Ejercicio:
+Hombro: Con el brazo afectado colgando, levanta el brazo hacia adelante (flexión) y hacia los lados (abducción) sin forzar el movimiento.
+Tobillo: Flexiona y extiende el pie lentamente mientras estás sentado.
+""".trimIndent(),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
         } else {
             Text(getRoutine(muscleTabs[selectedTabIndex], userMainGoal), style = MaterialTheme.typography.bodyLarge)
         }
