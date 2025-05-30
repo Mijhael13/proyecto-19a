@@ -29,6 +29,7 @@ class MainActivity : ComponentActivity() {
     private var weight by mutableStateOf(0f)
     private var height by mutableStateOf(0f)
     private var lesion by mutableStateOf("") // <-- Agregar variable de lesión
+    private var enfermedad by mutableStateOf("")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +54,7 @@ class MainActivity : ComponentActivity() {
                     weight = userProfile.weight
                     height = userProfile.height
                     lesion = userProfile.lesion // <-- Obtener lesión del perfil guardado
+                    enfermedad = userProfile.enfermedad
                     currentScreen = "recommendedExercises"
                 }
 
@@ -72,6 +74,7 @@ class MainActivity : ComponentActivity() {
                                     weight = profile.weight
                                     height = profile.height
                                     this.lesion = lesion // Guardar la lesión seleccionada
+                                    this.enfermedad = profile.enfermedad
                                     recommendedExercises = recommendExercises(profile.mainGoal)
                                     currentScreen = "recommendedExercises"
                                 }
@@ -89,7 +92,8 @@ class MainActivity : ComponentActivity() {
                                 userActivityLevel = activityLevel,
                                 userWeight = weight,
                                 userHeight = height,
-                                lesion = lesion, // <-- Pasar el valor de lesión
+                                lesion = lesion,
+                                enfermedad = enfermedad,
                                 onBack = { currentScreen = "userData" }
                             )
                         }

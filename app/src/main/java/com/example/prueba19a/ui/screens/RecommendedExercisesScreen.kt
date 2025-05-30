@@ -27,6 +27,7 @@ fun RecommendedExercisesScreen(
     userWeight: Float,
     userHeight: Float,
     lesion: String = "", // Valor por defecto para evitar error si no se pasa
+    enfermedad: String = "", // Valor por defecto para evitar error si no se pasa
     onBack: () -> Unit
 ) {
     // Estado para controlar la visibilidad de los datos del usuario
@@ -34,8 +35,13 @@ fun RecommendedExercisesScreen(
 
     // Tabs para grupos musculares
     val baseMuscleTabs = listOf("Pierna", "Brazos", "Cardio", "Pecho", "Abdominales")
-    val showLesionesTab = lesion == "Esguince" || lesion == "Recuperación de fracturas" || lesion == "Luxaciones"
-    val muscleTabs = if (showLesionesTab) baseMuscleTabs + "Lesiones" else baseMuscleTabs
+    val showLesionesTab = lesion == "Esguince" || lesion == "Recuperación de fracturas" || lesion == "Luxaciones" || lesion == "Lesiones de meniscos"
+    val showEnfermedadesTab = enfermedad.isNotEmpty() && enfermedad != "No"
+    val muscleTabs = buildList {
+        addAll(baseMuscleTabs)
+        if (showLesionesTab) add("Lesiones")
+        if (showEnfermedadesTab) add("Enfermedades")
+    }
     var selectedTabIndex by remember { mutableStateOf(0) }
     val scrollState = rememberScrollState()
 
@@ -73,7 +79,29 @@ fun RecommendedExercisesScreen(
         }
         Spacer(modifier = Modifier.height(16.dp)) // Padding entre tabs y contenido
         // Contenido de la rutina según la pestaña seleccionada
-        if (muscleTabs[selectedTabIndex] == "Lesiones") {
+        // Mostrar rutina especial para enfermedades
+        if (muscleTabs[selectedTabIndex] == "Enfermedades") {
+            when (enfermedad) {
+                "Obesidad" -> Text(
+                    """
+Rutina para Obesidad
+
+- Caminar a un ritmo acelerado durante 10-20 minutos.
+- Sentadillas asistidas
+  Duración: 10-15 repeticiones
+- Flexiones de Pared
+  Repeticiones: 5-10 repeticiones
+- Elevaciones de talones
+  Repeticiones: 10-15 repeticiones
+- Marcha en el lugar con brazos
+  Hecho en el lugar mientras mueves los brazos hacia arriba y hacia abajo.
+  5-10 minutos
+""".trimIndent(),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                // Aquí puedes agregar más enfermedades y rutinas si lo deseas
+            }
+        } else if (muscleTabs[selectedTabIndex] == "Lesiones") {
             when (lesion) {
                 "Esguince" -> {
                     Text(
@@ -175,6 +203,39 @@ Descripción: Mejora la movilidad y la fuerza.
 Ejercicio:
 Hombro: Con el brazo afectado colgando, levanta el brazo hacia adelante (flexión) y hacia los lados (abducción) sin forzar el movimiento.
 Tobillo: Flexiona y extiende el pie lentamente mientras estás sentado.
+""".trimIndent(),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+                "Lesiones de meniscos" -> {
+                    Text(
+                        """
+Ejercicios para Principiantes con Lesión de Meniscos
+
+1. Movimientos de Tobillo
+Descripción: Mejora la movilidad y circulación.
+Ejercicio:
+Siéntate en una silla y mueve el tobillo hacia arriba y hacia abajo, y realiza movimientos circulares. Haz 10 repeticiones en cada dirección.
+
+2. Estiramiento de Cuádriceps
+Descripción: Alivia la tensión en la parte frontal del muslo.
+Ejercicio:
+De pie, sujétate de una pared o una silla. Doble la rodilla afectada y lleva el talón hacia los glúteos. Mantén la posición durante 15-20 segundos y repite 2-3 veces.
+
+3. Flexiones de Rodilla (con apoyo)
+Descripción: Mejora la fuerza y movilidad de la rodilla.
+Ejercicio:
+De pie, con una silla o mesa para apoyo, flexiona la rodilla suavemente hacia atrás, levantando el pie del suelo. Mantén durante 5 segundos y baja. Repite 10-15 veces.
+
+4. Elevación de Talones
+Descripción: Fortalece los músculos de la pantorrilla.
+Ejercicio:
+Párate con los pies a la altura de los hombros. Levanta lentamente los talones del suelo y mantén la posición durante unos segundos antes de bajar. Repite 10-15 veces.
+
+5. Deslizamiento de Talón
+Descripción: Mejora la movilidad de la rodilla.
+Ejercicio:
+Acostado boca arriba, desliza el talón de la pierna afectada hacia los glúteos mientras mantienes el pie en el suelo. Luego, desliza el pie de regreso a la posición inicial. Repite 10-15 veces.
 """.trimIndent(),
                         style = MaterialTheme.typography.bodyLarge
                     )
