@@ -6,8 +6,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import com.example.prueba19a.models.UserProfile
@@ -26,36 +24,33 @@ fun UserDataScreen(
 ) {
     val context = LocalContext.current
     val userPreferences = UserPreferences(context)
+    val userProfile = userPreferences.getUserProfile()
 
-    var name by remember { mutableStateOf("") }
-    var age by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf(userProfile?.name ?: "") }
+    var age by remember { mutableStateOf(if (userProfile?.age != null && userProfile.age != 0) userProfile.age.toString() else "") }
     var fitnessLevel by remember { mutableStateOf("") }
-    var sex by remember { mutableStateOf("") }
-    var mainGoal by remember { mutableStateOf("") }
-    var motivation by remember { mutableStateOf("") }
-    var activityLevel by remember { mutableStateOf("") }
-    var weight by remember { mutableStateOf("") }
-    var height by remember { mutableStateOf("") }
-    var expandedSex by remember { mutableStateOf(false) }
+    var mainGoal by remember { mutableStateOf(userProfile?.mainGoal ?: "") }
+    var motivation by remember { mutableStateOf(userProfile?.motivation ?: "") }
+    var activityLevel by remember { mutableStateOf(userProfile?.activityLevel ?: "") }
+    var weight by remember { mutableStateOf(if (userProfile?.weight != null && userProfile.weight != 0f) userProfile.weight.toString() else "") }
+    var height by remember { mutableStateOf(if (userProfile?.height != null && userProfile.height != 0f) userProfile.height.toString() else "") }
     var expandedMotivation by remember { mutableStateOf(false) }
     var expandedActivityLevel by remember { mutableStateOf(false) }
     var profileMenuExpanded by remember { mutableStateOf(false) }
     var score by remember { mutableStateOf(0) }
 
     val fitnessLevels = listOf("Principiante", "Intermedio", "Avanzado")
-    val sexes = listOf("Masculino", "Femenino", "Otro")
     val mainGoals = listOf("Pérdida de peso", "Aumento de masa muscular", "Mejora de resistencia")
     val activityLevels = listOf("Sedentario", "Moderado", "Activo")
     val objetivos = listOf("Aumentar peso", "Aumentar músculo", "Mantenerse en forma")
 
-    var objetivo by remember { mutableStateOf("") }
+    var objetivo by remember { mutableStateOf(userProfile?.motivation ?: "") }
     var expandedObjetivo by remember { mutableStateOf(false) }
     var expandedFitnessLevel by remember { mutableStateOf(false) }
-    var expandedSexCombo by remember { mutableStateOf(false) }
     var expandedMainGoalCombo by remember { mutableStateOf(false) }
     var expandedActivityLevelCombo by remember { mutableStateOf(false) }
 
-    var lesion by remember { mutableStateOf("") }
+    var lesion by remember { mutableStateOf(userProfile?.lesion ?: "") }
     var expandedLesion by remember { mutableStateOf(false) }
     val opcionesLesion = listOf(
         "No",
@@ -65,14 +60,14 @@ fun UserDataScreen(
         "Lesiones de meniscos"
     )
 
-    var enfermedad by remember { mutableStateOf("") }
+    var enfermedad by remember { mutableStateOf(userProfile?.enfermedad ?: "") }
     var expandedEnfermedad by remember { mutableStateOf(false) }
     val opcionesEnfermedad = listOf(
         "No",
         "Obesidad"
     )
 
-    var dificultadMedica by remember { mutableStateOf("") }
+    var dificultadMedica by remember { mutableStateOf(userProfile?.dificultadMedica ?: "") }
     var expandedDificultadMedica by remember { mutableStateOf(false) }
     val opcionesDificultadMedica = listOf(
         "No",
@@ -154,45 +149,16 @@ fun UserDataScreen(
         Spacer(modifier = Modifier.height(8.dp))
         TextField(
             value = age,
-            onValueChange = { age = it },
+            onValueChange = {
+                age = it
+                updateScore() // Actualiza el puntaje inmediatamente al cambiar la edad
+            },
             label = { Text("Edad") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp))
 
         // Eliminar ComboBox para nivel de condición física
-
-        // ComboBox para sexo
-        Text("Sexo")
-        ExposedDropdownMenuBox(
-            expanded = expandedSexCombo,
-            onExpandedChange = { expandedSexCombo = !expandedSexCombo }
-        ) {
-            TextField(
-                value = if (sex.isEmpty()) "Selecciona tu sexo" else sex,
-                onValueChange = {},
-                readOnly = true,
-                label = { Text("Sexo") },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSexCombo) },
-                modifier = Modifier.menuAnchor().fillMaxWidth()
-            )
-            ExposedDropdownMenu(
-                expanded = expandedSexCombo,
-                onDismissRequest = { expandedSexCombo = false }
-            ) {
-                sexes.forEach { option ->
-                    DropdownMenuItem(
-                        text = { Text(option) },
-                        onClick = {
-                            sex = option
-                            expandedSexCombo = false
-                        },
-                        modifier = if (sex == option) Modifier.background(Color(0xFF1A98B8)) else Modifier
-                    )
-                }
-            }
-        }
-        Spacer(modifier = Modifier.height(8.dp))
 
         // ComboBox para objetivo personalizado
         Text("¿Cuál es tu objetivo?")
@@ -373,14 +339,12 @@ fun UserDataScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Puntaje acumulado: $score", style = MaterialTheme.typography.bodyMedium)
-        Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
                 val userProfile = UserProfile(
                     name = name,
                     age = age.toIntOrNull() ?: 0,
-                    sex = sex,
+                    sex = "",
                     muscleGroup = "",
                     mainGoal = mainGoal,
                     motivation = objetivo,

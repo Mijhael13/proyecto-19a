@@ -30,6 +30,8 @@ class MainActivity : ComponentActivity() {
     private var height by mutableStateOf(0f)
     private var lesion by mutableStateOf("") // <-- Agregar variable de lesión
     private var enfermedad by mutableStateOf("")
+    private var dificultadMedica by mutableStateOf("")
+    private var score by mutableStateOf(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +57,8 @@ class MainActivity : ComponentActivity() {
                     height = userProfile.height
                     lesion = userProfile.lesion // <-- Obtener lesión del perfil guardado
                     enfermedad = userProfile.enfermedad
+                    dificultadMedica = userProfile.dificultadMedica
+                    score = userProfile.score
                     currentScreen = "recommendedExercises"
                 }
 
@@ -75,6 +79,8 @@ class MainActivity : ComponentActivity() {
                                     height = profile.height
                                     this.lesion = lesion // Guardar la lesión seleccionada
                                     this.enfermedad = profile.enfermedad
+                                    this.dificultadMedica = profile.dificultadMedica
+                                    this.score = profile.score // <-- Actualizar score al dar Enviar
                                     recommendedExercises = recommendExercises(profile.mainGoal)
                                     currentScreen = "recommendedExercises"
                                 }
@@ -94,6 +100,8 @@ class MainActivity : ComponentActivity() {
                                 userHeight = height,
                                 lesion = lesion,
                                 enfermedad = enfermedad,
+                                dificultadMedica = dificultadMedica,
+                                score = score, // <-- Usar el score actualizado
                                 onBack = { currentScreen = "userData" }
                             )
                         }
