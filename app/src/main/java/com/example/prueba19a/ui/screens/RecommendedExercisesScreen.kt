@@ -1,5 +1,7 @@
 package com.example.prueba19a.ui.screens
 
+import android.content.Context
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -20,6 +22,9 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.res.ResourcesCompat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,12 +85,12 @@ fun RecommendedExercisesScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Menú de navegación de grupos musculares
-            ScrollableTabRow(selectedTabIndex = selectedTabIndex, contentColor = Color(0xFF1A98B8)) {
+            ScrollableTabRow(selectedTabIndex = selectedTabIndex, contentColor = Color.Black) {
                 muscleTabs.forEachIndexed { index, title ->
                     Tab(
                         selected = selectedTabIndex == index,
                         onClick = { selectedTabIndex = index },
-                        text = { Text(title, color = if (selectedTabIndex == index) Color(0xFF1A98B8) else LocalContentColor.current) }
+                        text = { Text(title, color = if (selectedTabIndex == index) Color.Black else LocalContentColor.current) }
                     )
                 }
             }
@@ -94,214 +99,124 @@ fun RecommendedExercisesScreen(
             // Mostrar rutina especial para enfermedades
             if (muscleTabs[selectedTabIndex] == "Enfermedades") {
                 when (enfermedad) {
-                    "Obesidad" -> Text(
-                        """
-Rutina para Obesidad
-
-- Caminar a un ritmo acelerado durante 10-20 minutos.
-- Sentadillas asistidas
-  Duración: 10-15 repeticiones
-- Flexiones de Pared
-  Repeticiones: 5-10 repeticiones
-- Elevaciones de talones
-  Repeticiones: 10-15 repeticiones
-- Marcha en el lugar con brazos
-  Hecho en el lugar mientras mueves los brazos hacia arriba y hacia abajo.
-  5-10 minutos
-""".trimIndent(),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
+                    "Obesidad" -> {
+                        val ejercicios = listOf(
+                            Ejercicio("Caminata rápida", "obesidad_caminata_rapida", "10-20 min"),
+                            Ejercicio("Sentadillas asistidas", "obesidad_sentadillas_asistidas", "10-15 repeticiones"),
+                            Ejercicio("Flexiones de pared", "obesidad_flexiones_de_pared", "5-10 repeticiones"),
+                            Ejercicio("Elevaciones de talones", "obesidad_elevaciones_de_talones", "10-15 repeticiones"),
+                            Ejercicio("Marcha en el lugar con brazos", "obesidad_marcha_en_el_lugar_con_el_brazo", "5-10 min")
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .widthIn(max = 420.dp)
+                                .align(Alignment.CenterHorizontally),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                ejercicios.forEach { ejercicio ->
+                                    val drawableId = getDrawableIdByName(ejercicio.nombreImagen)
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(vertical = 8.dp)) {
+                                        Text(text = "${ejercicio.nombre}  |  ${ejercicio.repeticiones}", style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        if (drawableId != 0) {
+                                            Image(
+                                                painter = painterResource(id = drawableId),
+                                                contentDescription = ejercicio.nombre,
+                                                modifier = Modifier.size(192.dp)
+                                            )
+                                        } else {
+                                            Spacer(modifier = Modifier.size(192.dp))
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     // Aquí puedes agregar más enfermedades y rutinas si lo deseas
                 }
             } else if (muscleTabs[selectedTabIndex] == "Lesiones") {
                 when (lesion) {
                     "Esguince" -> {
-                        Text(
-                            """
-Ejercicios para la Recuperación de Esguinces
-
-1. Movilidad Articular
-Descripción: Realiza movimientos suaves para mejorar la movilidad.
-Ejercicio: Si es un esguince de tobillo, mueve el pie en círculos en ambas direcciones. Haz flexiones y extensiones del tobillo.
-
-2. Estiramientos
-Descripción: Estira suavemente los músculos alrededor de la articulación afectada.
-Ejercicio: Para un esguince de tobillo, siéntate y estira la pierna afectada. Tira suavemente de los dedos del pie hacia ti para estirar la parte posterior de la pierna.
-
-3. Fortalecimiento Isométrico
-Descripción: Fortalecer los músculos sin mover la articulación.
-Ejercicio: Presiona suavemente el pie contra una pared o una almohada sin moverlo. Mantén la presión durante 5-10 segundos y relaja.
-
-4. Elevación de Talones
-Descripción: Fortalecer los músculos de la pantorrilla.
-Ejercicio: De pie, levanta lentamente los talones del suelo y mantenlos en esa posición durante unos segundos. Luego, baja lentamente.
-
-5. Ejercicio de Equilibrio
-Descripción: Mejora la estabilidad.
-Ejercicio: Párate sobre una pierna (la no afectada) durante 10-30 segundos. Si te sientes seguro, intenta hacerlo con los ojos cerrados.
-""".trimIndent(),
-                            style = MaterialTheme.typography.bodyLarge
+                        val ejercicios = listOf(
+                            Ejercicio("Movilidad articular", "esguince_movilidad_articular", "1-2 min"),
+                            Ejercicio("Flexión y extensión de tobillo", "esguince_flexion_y_extension_de_tobillo", "1-2 min"),
+                            Ejercicio("Fortalecimiento isométrico", "esguince_fortalecimiento_isometrico", "5-10 repeticiones"),
+                            Ejercicio("Elevación de talones", "esguince_elevacion_de_talones", "10-15 repeticiones"),
+                            Ejercicio("Ejercicio de equilibrio", "esguince_ejercicio_de_equilibrio", "10-30 seg")
                         )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .widthIn(max = 420.dp)
+                                .align(Alignment.CenterHorizontally),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                ejercicios.forEach { ejercicio ->
+                                    val drawableId = getDrawableIdByName(ejercicio.nombreImagen)
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(vertical = 8.dp)) {
+                                        Text(text = "${ejercicio.nombre}  |  ${ejercicio.repeticiones}", style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        if (drawableId != 0) {
+                                            Image(
+                                                painter = painterResource(id = drawableId),
+                                                contentDescription = ejercicio.nombre,
+                                                modifier = Modifier.size(192.dp)
+                                            )
+                                        } else {
+                                            Spacer(modifier = Modifier.size(192.dp))
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-                    "Recuperación de fracturas" -> {
-                        Text(
-                            """
-Ejercicios para la Recuperación de Fracturas
-
-1. Movilidad Articular Suave
-Descripción: Mueve suavemente la articulación cercana a la fractura.
-Ejercicio:
-Si la fractura es en el brazo, mueve suavemente los dedos y la muñeca.
-Si es en la pierna, mueve los dedos del pie y el tobillo.
-
-2. Estiramientos Isométricos
-Descripción: Fortalece los músculos sin mover la articulación afectada.
-Ejercicio:
-Presiona suavemente el brazo o la pierna contra una superficie (como una pared) sin moverlo. Mantén la presión durante 5-10 segundos y relaja.
-
-3. Elevación de Miembros
-Descripción: Reduce la hinchazón y mejora la circulación.
-Ejercicio:
-Si tienes una fractura en la pierna, eleva la pierna sobre una almohada mientras estás acostado o sentado.
-
-4. Ejercicios de Respiración Profunda
-Descripción: Mejora la circulación y ayuda a la recuperación general.
-Ejercicio:
-Siéntate o acuéstate cómodamente y respira profundamente, llenando tus pulmones de aire. Mantén la respiración durante unos segundos y exhala lentamente.
-
-5. Caminar (si está permitido)
-Descripción: Mejora la movilidad y la circulación.
-Ejercicio:
-Si tu médico lo permite, comienza a caminar con apoyo (muletas o un andador) para mantener la movilidad.
-
-6. Flexiones de Tobillo (si es en la pierna)
-Descripción: Mejora la movilidad del tobillo.
-Ejercicio:
-Siéntate con la pierna estirada y mueve el tobillo hacia arriba y hacia abajo suavemente.
-""".trimIndent(),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                    "Luxaciones" -> {
-                        Text(
-                            """
-Ejercicios para la Recuperación de Luxaciones
-
-1. Movilidad Suave
-Descripción: Mejora la movilidad de la articulación afectada sin forzar.
-Ejercicio:
-Para el hombro: Siéntate o párate y deja que el brazo afectado cuelgue. Mueve suavemente el brazo en círculos pequeños en ambas direcciones.
-Para el tobillo: Siéntate y mueve el tobillo hacia arriba y hacia abajo, y realiza movimientos circulares.
-
-2. Estiramientos Suaves
-Descripción: Alivia la tensión en los músculos alrededor de la articulación.
-Ejercicio:
-Hombro: Lleva el brazo afectado hacia el lado opuesto del cuerpo, usando la otra mano para ayudar suavemente. Mantén la posición durante 15-30 segundos.
-Tobillo: Estira el pie hacia arriba y hacia abajo mientras estás sentado.
-
-3. Fortalecimiento Isométrico
-Descripción: Fortalece los músculos sin mover la articulación.
-Ejercicio:
-Hombro: Presiona la palma de la mano contra una pared o superficie sólida sin mover el brazo. Mantén durante 5-10 segundos.
-Tobillo: Presiona el pie contra una superficie suave (como una almohada) sin moverlo. Mantén durante 5-10 segundos.
-
-4. Ejercicios de Equilibrio
-Descripción: Mejora la estabilidad general.
-Ejercicio:
-Tobillo: Párate sobre una pierna (la no afectada) y mantén el equilibrio durante 10-30 segundos. Si te sientes seguro, intenta hacerlo con los ojos cerrados.
-
-5. Movimientos de Flexión y Extensión
-Descripción: Mejora la movilidad y la fuerza.
-Ejercicio:
-Hombro: Con el brazo afectado colgando, levanta el brazo hacia adelante (flexión) y hacia los lados (abducción) sin forzar el movimiento.
-Tobillo: Flexiona y extiende el pie lentamente mientras estás sentado.
-""".trimIndent(),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                    "Lesiones de meniscos" -> {
-                        Text(
-                            """
-Ejercicios para Principiantes con Lesión de Meniscos
-
-1. Movimientos de Tobillo
-Descripción: Mejora la movilidad y circulación.
-Ejercicio:
-Siéntate en una silla y mueve el tobillo hacia arriba y hacia abajo, y realiza movimientos circulares. Haz 10 repeticiones en cada dirección.
-
-2. Estiramiento de Cuádriceps
-Descripción: Alivia la tensión en la parte frontal del muslo.
-Ejercicio:
-De pie, sujétate de una pared o una silla. Doble la rodilla afectada y lleva el talón hacia los glúteos. Mantén la posición durante 15-20 segundos y repite 2-3 veces.
-
-3. Flexiones de Rodilla (con apoyo)
-Descripción: Mejora la fuerza y movilidad de la rodilla.
-Ejercicio:
-De pie, con una silla o mesa para apoyo, flexiona la rodilla suavemente hacia atrás, levantando el pie del suelo. Mantén durante 5 segundos y baja. Repite 10-15 veces.
-
-4. Elevación de Talones
-Descripción: Fortalece los músculos de la pantorrilla.
-Ejercicio:
-Párate con los pies a la altura de los hombros. Levanta lentamente los talones del suelo y mantén la posición durante unos segundos antes de bajar. Repite 10-15 veces.
-
-5. Deslizamiento de Talón
-Descripción: Mejora la movilidad de la rodilla.
-Ejercicio:
-Acostado boca arriba, desliza el talón de la pierna afectada hacia los glúteos mientras mantienes el pie en el suelo. Luego, desliza el pie de regreso a la posición inicial. Repite 10-15 veces.
-""".trimIndent(),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
+                    // Aquí puedes agregar más lesiones y rutinas si lo deseas
                 }
             } else if (muscleTabs[selectedTabIndex] == "Dificultad Médica") {
                 when (dificultadMedica) {
-                    "Tendinitis" -> Text(
-                        """
-Rutina para Tendinitis
-
-1. Estiramiento de muñeca
-Descripción: Estira suavemente la muñeca afectada hacia abajo y hacia arriba, manteniendo cada posición durante 15-20 segundos. Repite 2-3 veces.
-
-2. Fortalecimiento isométrico
-Descripción: Presiona la palma de la mano contra una superficie (como una mesa) sin mover la muñeca. Mantén la presión durante 5-10 segundos y relaja. Repite 5 veces.
-
-3. Movilidad suave
-Descripción: Realiza movimientos circulares lentos con la muñeca y el antebrazo. Haz 10 repeticiones en cada dirección.
-
-4. Compresas frías
-Descripción: Aplica una compresa fría sobre la zona afectada durante 10-15 minutos después de los ejercicios.
-
-5. Descanso activo
-Descripción: Evita actividades que causen dolor, pero mantén la movilidad suave de la articulación.
-""".trimIndent(),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    "Problemas de espalda" -> Text(
-                        """
-Rutina para Problemas de Espalda
-
-- Estiramiento en 4 patas (manos y rodillas):
-  Arquear la espalda hacia arriba (posición de gato) y luego hacia abajo (posición de vaca).
-  Repeticiones: 10-15 veces
-
-- Plancha:
-  Duración: 20-30 segundos, aumentando gradualmente.
-
-- Estiramiento de piriforme:
-  Duración: 20-30 segundos por lado
-
-- Rotación de tronco:
-  Repeticiones: 5-10 por lado
-
-- Puente:
-  Repeticiones: 10-15 veces
-""".trimIndent(),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
+                    "Problemas de espalda" -> {
+                        val ejercicios = listOf(
+                            Ejercicio("Estiramiento gato-vaca", "problemas_de_espalda_estiramiento_gato_vaca", "10-15 repeticiones"),
+                            Ejercicio("Plancha", "problemas_de_espalda_plancha", "20-30 seg"),
+                            Ejercicio("Estiramiento de piriforme", "problemas_de_espalda_estiramiento_piriforme", "20-30 seg por lado"),
+                            Ejercicio("Rotación de tronco", "problemas_de_espalda_rotacion_de_tronco", "5-10 por lado"),
+                            Ejercicio("Puente", "problemas_de_espalda_puente", "10-15 repeticiones")
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .widthIn(max = 420.dp)
+                                .align(Alignment.CenterHorizontally),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                ejercicios.forEach { ejercicio ->
+                                    val drawableId = getDrawableIdByName(ejercicio.nombreImagen)
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(vertical = 8.dp)) {
+                                        Text(text = "${ejercicio.nombre}  |  ${ejercicio.repeticiones}", style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        if (drawableId != 0) {
+                                            Image(
+                                                painter = painterResource(id = drawableId),
+                                                contentDescription = ejercicio.nombre,
+                                                modifier = Modifier.size(192.dp)
+                                            )
+                                        } else {
+                                            Spacer(modifier = Modifier.size(192.dp))
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     // Aquí puedes agregar más dificultades médicas y rutinas si lo deseas
                 }
             } else {
                 // Mostrar rutina de abdominales y demás grupos según el puntaje (score) calculado en UserDataScreen
+                val ejercicios = getRoutineList(muscleTabs[selectedTabIndex], score = score.toString())
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -309,18 +224,35 @@ Rutina para Problemas de Espalda
                         .align(Alignment.CenterHorizontally),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        getRoutine(muscleTabs[selectedTabIndex], score = score.toString()),
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center
-                    )
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        // Mostrar nombre y repeticiones arriba, imagen abajo
+                        ejercicios.forEach { ejercicio ->
+                            val drawableId = getDrawableIdByName(ejercicio.nombreImagen)
+                            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(vertical = 8.dp)) {
+                                Text(text = "${ejercicio.nombre}  |  ${ejercicio.repeticiones}", style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
+                                Spacer(modifier = Modifier.height(8.dp))
+                                if (drawableId != 0) {
+                                    Image(
+                                        painter = painterResource(id = drawableId),
+                                        contentDescription = ejercicio.nombre,
+                                        modifier = Modifier.size(192.dp) // Tamaño 3 veces más grande
+                                    )
+                                } else {
+                                    Spacer(modifier = Modifier.size(192.dp)) // Espacio vacío si no hay imagen
+                                }
+                            }
+                        }
+                        if (ejercicios.isEmpty()) {
+                            Text("No hay ejercicios para este grupo.", style = MaterialTheme.typography.bodyLarge)
+                        }
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
                 onClick = onBack,
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A98B8)),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Volver")
@@ -341,8 +273,8 @@ Rutina para Problemas de Espalda
                     Text("Peso: $userWeight kg", modifier = Modifier.padding(vertical = 4.dp))
                     Text("Altura: $userHeight cm", modifier = Modifier.padding(vertical = 4.dp))
                     Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = { showUserProfile = false }, modifier = Modifier.fillMaxWidth()) {
-                        Text("Cerrar")
+                    Button(onClick = { showUserProfile = false }, colors = ButtonDefaults.buttonColors(containerColor = Color.Black), modifier = Modifier.fillMaxWidth()) {
+                        Text("Cerrar", color = Color.White)
                     }
                 }
             }
@@ -350,9 +282,11 @@ Rutina para Problemas de Espalda
     }
 }
 
-// Función para obtener la rutina según el grupo muscular y el puntaje
-fun getRoutine(muscleGroup: String, score: String): String {
-    // Determinar el nivel según el puntaje numérico
+// 1. Data class para ejercicio
+data class Ejercicio(val nombre: String, val nombreImagen: String, val repeticiones: String)
+
+// 2. Nueva función para obtener la lista de ejercicios y su imagen
+fun getRoutineList(muscleGroup: String, score: String): List<Ejercicio> {
     val nivel = score.toIntOrNull()?.let {
         when {
             it <= 5 -> "principiante"
@@ -363,219 +297,125 @@ fun getRoutine(muscleGroup: String, score: String): String {
     } ?: score.trim().lowercase()
     return when (muscleGroup) {
         "Pierna" -> when (nivel) {
-            "avanzado" -> """
-Avanzado · Pierna
-
-1. Sentadilla búlgara (en un banco)
-   4x12-15
-2. Pistols (una pierna)
-   3x6-8 c/pierna
-3. Zancadas cortas (con peso)
-   3x15-20
-4. Sentadilla con saltos
-   3x10-12
-5. Puente de glúteos
-   3x12-15
-""".trimIndent()
-            "intermedio" -> """
-Intermedio · Pierna
-
-1. Sentadilla (con peso)
-   3-4x12-15
-2. Sentadillas búlgaras (en banco)
-   4x10-12 c/pierna
-3. Peso muerto romano (con peso)
-   3x10-12
-4. Sentadilla sumo
-   4x12-15
-5. Elevación de talones a una pierna
-   3x12-15
-""".trimIndent()
-            else -> """
-Principiante · Pierna
-
-1. Sentadillas
-   3x10-12
-2. Zancadas
-   3x8-10 c/pierna
-3. Puente de glúteos
-   3x12-15
-4. Saltos bipodales
-   3x15-20
-5. Elevación de talones
-   3x15-20
-""".trimIndent()
+            "avanzado" -> listOf(
+                Ejercicio("Sentadilla búlgara (en un banco)", "pierna_avanzado_sentadilla_bulgara", "4x12"),
+                Ejercicio("Pistols (una pierna)", "pierna_avanzado_pistol_squats", "3x8 por pierna"),
+                Ejercicio("Zancadas cortas (con peso)", "pierna_avanzado_zancadas_con_peso", "4x10 por pierna"),
+                Ejercicio("Sentadilla con saltos", "pierna_avanzado_sentadilla_explosiva", "3x15"),
+                Ejercicio("Puente de glúteos", "pierna_avanzado_punte_de_gluteos", "4x15")
+            )
+            "intermedio" -> listOf(
+                Ejercicio("Sentadilla (con peso)", "pierna_intermedio_sentadilla_con_peso", "4x12"),
+                Ejercicio("Sentadillas búlgaras (en banco)", "pierna_intermedio_sentadilla_bulgara", "3x10 por pierna"),
+                Ejercicio("Peso muerto romano (con peso)", "pierna_intermedio_peso_muerto_rumano", "4x10"),
+                Ejercicio("Sentadilla sumo", "pierna_intermedio_sentadilla_sumo", "3x12"),
+                Ejercicio("Elevación de talones a una pierna", "pierna_intermedio_elevacion_de_talones", "3x12 por pierna")
+            )
+            else -> listOf(
+                Ejercicio("Sentadillas", "pierna_principiante_sentadilla", "3x15"),
+                Ejercicio("Zancadas", "pierna_principiante_zancadas_estaticass", "3x10 por pierna"),
+                Ejercicio("Puente de glúteos", "pierna_principiante_punte_de_gluteos", "3x12"),
+                Ejercicio("Saltos bipodales", "pierna_principiante_saltos_bi_podales", "3x15"),
+                Ejercicio("Elevación de talones", "pierna_principiante_elevacion_de_talones", "3x15")
+            )
         }
         "Pecho" -> when (nivel) {
-            "avanzado" -> """
-Avanzado · Pecho
-
-1. Flexiones explosivas
-   4x8-12
-2. Flexiones estándar
-   4x15-18
-3. Flexiones con pies elevados
-   4x12-15
-4. Flexiones a una mano
-   3x5-8 c/mano
-5. Fondos en silla con peso
-   3x12-15
-""".trimIndent()
-            "intermedio" -> """
-Intermedio · Pecho
-
-1. Flexiones estándar
-   4x10-15
-2. Flexiones declinadas
-   4x10-12
-3. Flexiones en diamante
-   4x10-12
-4. Fondos en silla
-   3x12-15
-5. Flexiones abiertas
-   3x8-10
-""".trimIndent()
-            else -> """
-Principiante · Pecho
-
-1. Flexiones con rodillas
-   4x10-12
-2. Flexiones inclinadas
-   4x10-12
-3. Flexiones declinadas
-   4x10-8
-4. Apertura con liga de estiramiento
-   3x12-15
-""".trimIndent()
+            "avanzado" -> listOf(
+                Ejercicio("Flexiones explosivas", "pecho_avanzado_flexiones_explosivas", "4x12"),
+                Ejercicio("Flexiones estándar", "pecho_avanzado_flexiones_basicas", "4x15"),
+                Ejercicio("Flexiones con pies elevados", "pecho_avanzado_flexiones_inclinadas_con_pies_elevados", "4x10"),
+                Ejercicio("Flexiones a una mano", "pecho_avanzado_flexiones_a_una_mano", "3x6 por lado"),
+                Ejercicio("Fondos en silla con peso", "pecho_avanzado_fondos_en_silla", "4x10")
+            )
+            "intermedio" -> listOf(
+                Ejercicio("Flexiones estándar", "pecho_intermedio_flexiones_basicas", "4x12"),
+                Ejercicio("Flexiones declinadas", "pecho_intermedio_flexiones_declinadas", "3x10"),
+                Ejercicio("Flexiones en diamante", "pecho_intermedio_flexiones_diamante", "3x10"),
+                Ejercicio("Fondos en silla", "pecho_intermedio_fondos_en_silla", "3x12"),
+                Ejercicio("Flexiones abiertas", "pecho_intermedio_flexiones_abiertas", "3x12")
+            )
+            else -> listOf(
+                Ejercicio("Flexiones con rodillas", "pecho_principiante_flexiones_con_rodillas", "3x10"),
+                Ejercicio("Flexiones inclinadas", "pecho_principiante_flexiones_inclinadas", "3x10"),
+                Ejercicio("Flexiones declinadas", "pecho_principiante_flexiones_declinadas", "3x8"),
+                Ejercicio("Apertura con liga de estiramiento", "pecho_principiante_apertura_con_liga_de_estiramiento", "3x12")
+            )
         }
         "Abdominales" -> when (nivel) {
-            "avanzado" -> """
-Avanzado · Abdomen
-
-1. Crunch en V
-   4x12-15
-2. Elevaciones de piernas
-   4x15-18
-3. Dragón flags
-   3x30 segs
-4. Plancha en caminata
-   3x45 segs
-""".trimIndent()
-            "intermedio" -> """
-Intermedio · Abdomen
-
-1. Crunch bicicleta
-   4x12-15
-2. Crunch de tijera
-   4x12-15
-3. Elevaciones de piernas
-   4x12-15
-4. Plancha lateral
-   4x30 segs c/lado
-""".trimIndent()
-            else -> """
-Principiante · Abdomen
-
-1. Crunch básico
-   4x10-15
-2. Elevaciones de pierna
-   4x10-15
-3. Plancha
-   4x40 segs
-4. Crunch invertido
-   4x10-15
-""".trimIndent()
+            "avanzado" -> listOf(
+                Ejercicio("Crunch en V", "abdomen_avanzado_cruch_en_v", "4x15"),
+                Ejercicio("Elevaciones de piernas", "abdomen_avanzado_elevaciones_de_piernas", "4x15"),
+                Ejercicio("Dragón flags", "abdomen_avanzado_dragon_flags", "3x8"),
+                Ejercicio("Plancha en caminata", "abdomen_avanzado_plancha_en_caminata", "3x40 seg")
+            )
+            "intermedio" -> listOf(
+                Ejercicio("Crunch bicicleta", "abdomen_intermedio_cruch_en_bicicleta", "3x20"),
+                Ejercicio("Crunch de tijera", "abdomen_intermedio_cruch_en_tijera", "3x15"),
+                Ejercicio("Elevaciones de piernas", "abdomen_intermedio_elevaciones_de_piernas", "3x15"),
+                Ejercicio("Plancha lateral", "abdomen_intermedio_plancha_lateral", "3x30 seg por lado")
+            )
+            else -> listOf(
+                Ejercicio("Crunch básico", "abdomen_principiantes_cruch_basico", "3x15"),
+                Ejercicio("Elevaciones de pierna", "abdomen_principiantes_elevaciones_de_piernas", "3x12"),
+                Ejercicio("Plancha", "abdomen_principiantes_plancha", "3x30 seg"),
+                Ejercicio("Crunch invertido", "abdomen_principiantes_cruch_invertido", "3x12")
+            )
         }
         "Brazos" -> when (nivel) {
-            "avanzado" -> """
-Avanzado · Brazos
-
-1. Curl de bíceps inclinado
-   4x8-10
-2. Remos australianos unilateral
-   3x6-8
-3. Flexiones en puño
-   4x3-5
-4. Flexiones explosivas
-   4x6-10
-5. Fondos en silla con peso
-   3x12-15
-""".trimIndent()
-            "intermedio" -> """
-Intermedio · Brazos
-
-1. Curl de bícep (con mancuerna)
-   4x12-15
-2. Remos australianos (en barra)
-   4x10-12
-3. Curl de bíceps concentrado (mancuerna)
-   3x10-12
-4. Flexiones en diamante
-   4x12-15
-5. Fondos en silla con piernas elevadas
-   4x12-15
-""".trimIndent()
-            else -> """
-Principiante · Brazos
-
-1. Curl de bícep (botella/manc. pequeña)
-   3x10-12
-2. Flexiones invertidas
-   3x8-12
-3. Fondos en silla
-   3x10-16
-4. Extensión de tríceps (botella/manc.)
-   3x12-15
-5. Flexiones en diamante
-   3x10-12
-""".trimIndent()
+            "avanzado" -> listOf(
+                Ejercicio("Curl de bíceps inclinado", "brazo_avanzado_curl_de_biceps_inclinado", "4x10"),
+                Ejercicio("Remos australianos unilateral", "brazo_avanzado_remos_autralianas", "4x8 por lado"),
+                Ejercicio("Flexiones en puño", "brazo_avanzado_flexiones_en_pino", "3x8"),
+                Ejercicio("Flexiones explosivas", "brazo_avanzado_flexiones_explosivas", "4x10"),
+                Ejercicio("Fondos en silla con peso", "brazo_avanzado_fondos_en_silla", "4x10")
+            )
+            "intermedio" -> listOf(
+                Ejercicio("Curl de bícep (con mancuerna)", "brazo_intermedio_curl_de_biceps", "4x12"),
+                Ejercicio("Remos australianos (en barra)", "brazo_intermedio_remos_australianos", "4x10"),
+                Ejercicio("Curl de bíceps concentrado (mancuerna)", "brazo_intermedio_curl_de_bicep_concetrado", "3x10"),
+                Ejercicio("Flexiones en diamante", "brazo_intermedio_flexiones_diamante", "3x12"),
+                Ejercicio("Fondos en silla con piernas elevadas", "brazo_intermedio_fondos_inclinados", "3x12")
+            )
+            else -> listOf(
+                Ejercicio("Curl de bícep (botella/manc. pequeña)", "brazo_principiante_curl_de_biceps", "3x12"),
+                Ejercicio("Flexiones invertidas", "brazo_principiante_flexiones_invertidas", "3x10"),
+                Ejercicio("Fondos en silla", "brazo_principiante_fondos_en_silla", "3x10"),
+                Ejercicio("Extensión de tríceps (botella/manc.)", "brazo_principiante_extencion_de_triceps_con_peso", "3x12"),
+                Ejercicio("Flexiones en diamante", "brazo_principiante_flexiones_diamante", "3x10")
+            )
         }
         "Cardio" -> when (nivel) {
-            "avanzado" -> """
-Avanzado · Cardio
-
-1. Rodillas a pecho explosiva
-   4x60 segs
-2. Burpees (sin flexión)
-   4x45 segs
-3. Plancha con toque de hombros
-   4x60 segs
-4. Salto de cuerda
-   4x45 segs
-5. Sentadillas explosivas
-   3x10-15
-""".trimIndent()
-            "intermedio" -> """
-Intermedio · Cardio
-
-1. Marcha rápida
-   4x45 segs
-2. Saltos de tijera
-   4x45 segs
-3. Rodillas al pecho
-   4x45 segs
-4. Talones al glúteo
-   4x45 segs
-5. Saltar la cuerda
-   3x30 segs
-""".trimIndent()
-            else -> """
-Principiante · Cardio
-
-1. Marcha estática
-   4x45 segs
-2. Saltos de tijera
-   4x30 segs
-3. Saltos bipodales
-   4x30 segs
-4. Trote suave
-   3x1:30 min
-5. Boxeo de sombra
-   3x30 segs
-""".trimIndent()
+            "avanzado" -> listOf(
+                Ejercicio("Rodillas a pecho explosiva", "cardio_avanzado_salto_con_rodillas_al_pecho", "4x20"),
+                Ejercicio("Burpees (sin flexión)", "cardio_avanzado_burpees", "4x15"),
+                Ejercicio("Plancha con toque de hombros", "cardio_avanzado_plancha_con_toques_de_hombros", "3x30 seg"),
+                Ejercicio("Salto de cuerda", "cardio_avanzado_salto_de_cuerda", "4x1 min"),
+                Ejercicio("Sentadillas explosivas", "cardio_avanzado_sentadilla_explosiva", "4x15")
+            )
+            "intermedio" -> listOf(
+                Ejercicio("Marcha rápida", "cardio_intermedio_marcha_rapida", "4x2 min"),
+                Ejercicio("Saltos de tijera", "cardio_intermedio_saltos_de_tijera", "4x20"),
+                Ejercicio("Rodillas al pecho", "cardio_intermedio_salto_con_rodillas_al_pecho", "4x15"),
+                Ejercicio("Talones al glúteo", "cardio_intermedio_punte_de_gluteos", "4x20"),
+                Ejercicio("Saltar la cuerda", "cardio_intermedio_salto_de_cuerda", "4x1 min")
+            )
+            else -> listOf(
+                Ejercicio("Marcha estática", "cardio_principiante_caminata_estatica", "3x2 min"),
+                Ejercicio("Saltos de tijera", "cardio_principiante_saltos_de_tijera", "3x15"),
+                Ejercicio("Saltos bipodales", "cardio_principiante_saltos_bi_podales", "3x12"),
+                Ejercicio("Trote suave", "cardio_principiante_trotar", "3x2 min"),
+                Ejercicio("Boxeo de sombra", "cardio_principiante_boxeo_de_sombra", "3x1 min")
+            )
         }
-        else -> "Rutina de $muscleGroup con puntaje $score"
+        else -> emptyList()
     }
+}
+
+// Función utilitaria para obtener el id del recurso drawable por nombre
+@Composable
+fun getDrawableIdByName(nombre: String): Int {
+    val context = LocalContext.current
+    return context.resources.getIdentifier(nombre, "drawable", context.packageName)
 }
 
 @Preview(showBackground = true)

@@ -185,7 +185,7 @@ fun UserDataScreen(
                             objetivo = option
                             expandedObjetivo = false
                         },
-                        modifier = if (objetivo == option) Modifier.background(Color(0xFF1A98B8)) else Modifier
+                        modifier = if (objetivo == option) Modifier.background(Color(0xFFE0E0E0)) else Modifier
                     )
                 }
             }
@@ -217,7 +217,7 @@ fun UserDataScreen(
                             activityLevel = option
                             expandedActivityLevelCombo = false
                         },
-                        modifier = if (activityLevel == option) Modifier.background(Color(0xFF1A98B8)) else Modifier
+                        modifier = if (activityLevel == option) Modifier.background(Color(0xFFE0E0E0)) else Modifier
                     )
                 }
             }
@@ -267,7 +267,7 @@ fun UserDataScreen(
                             lesion = option
                             expandedLesion = false
                         },
-                        modifier = if (lesion == option) Modifier.background(Color(0xFF1A98B8)) else Modifier
+                        modifier = if (lesion == option) Modifier.background(Color(0xFFE0E0E0)) else Modifier
                     )
                 }
             }
@@ -299,7 +299,7 @@ fun UserDataScreen(
                             enfermedad = option
                             expandedEnfermedad = false
                         },
-                        modifier = if (enfermedad == option) Modifier.background(Color(0xFF1A98B8)) else Modifier
+                        modifier = if (enfermedad == option) Modifier.background(Color(0xFFE0E0E0)) else Modifier
                     )
                 }
             }
@@ -331,7 +331,7 @@ fun UserDataScreen(
                             dificultadMedica = option
                             expandedDificultadMedica = false
                         },
-                        modifier = if (dificultadMedica == option) Modifier.background(Color(0xFF1A98B8)) else Modifier
+                        modifier = if (dificultadMedica == option) Modifier.background(Color(0xFFE0E0E0)) else Modifier
                     )
                 }
             }
@@ -360,9 +360,9 @@ fun UserDataScreen(
                 userPreferences.saveUserProfile(userProfile)
                 onDataSubmitted(userProfile, lesion) // <-- Pasar lesion al callback
             },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A98B8))
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
         ) {
-            Text("Enviar")
+            Text("Enviar", color = Color.White)
         }
     }
 }
