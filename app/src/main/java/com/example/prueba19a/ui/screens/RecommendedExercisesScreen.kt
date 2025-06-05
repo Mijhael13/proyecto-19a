@@ -173,6 +173,79 @@ fun RecommendedExercisesScreen(
                             }
                         }
                     }
+                    "Luxaciones" -> {
+                        val ejercicios = listOf(
+                            Ejercicio("Movilidad suave (tobillo)", "luxaciones_movilidad_suave_tobillo", "1-2 min"),
+                            Ejercicio("Movilidad suave (hombro)", "luxaciones_movilidad_suave_hombro", "1-2 min"),
+                            Ejercicio("Estiramiento suave (tobillo)", "luxaciones_estiramiento_suave_tobillo", "15-30 seg"),
+                            Ejercicio("Estiramiento suave (hombro)", "luxaciones_estiramiento_suave_hombro", "15-30 seg"),
+                            Ejercicio("Fortalecimiento isométrico (tobillo)", "luxaciones_fortalecimiento_isometrico_tobillo", "5-10 seg"),
+                            Ejercicio("Fortalecimiento isométrico (hombro)", "luxaciones_fortalecimiento_isometrico_hombro", "5-10 seg"),
+                            Ejercicio("Ejercicios de equilibrio", "luxaciones_equilibrio", "10-30 seg"),
+                            Ejercicio("Flexión y extensión", "luxaciones__flexion_y_extension", "10-15 repeticiones")
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .widthIn(max = 420.dp)
+                                .align(Alignment.CenterHorizontally),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                ejercicios.forEach { ejercicio ->
+                                    val drawableId = getDrawableIdByName(ejercicio.nombreImagen)
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(vertical = 8.dp)) {
+                                        Text(text = "${ejercicio.nombre}  |  ${ejercicio.repeticiones}", style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        if (drawableId != 0) {
+                                            Image(
+                                                painter = painterResource(id = drawableId),
+                                                contentDescription = ejercicio.nombre,
+                                                modifier = Modifier.size(192.dp)
+                                            )
+                                        } else {
+                                            Spacer(modifier = Modifier.size(192.dp))
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    "Lesiones de meniscos" -> {
+                        val ejercicios = listOf(
+                            Ejercicio("Movimientos de tobillo", "lesion_de_meniscos_movimiento_tobillos", "10 repeticiones en cada dirección"),
+                            Ejercicio("Flexiones de rodilla (con apoyo)", "lesion_de_meniscos_flexiones_de_rodillas", "10-15 repeticiones"),
+                            Ejercicio("Estiramiento de cuádriceps", "lesion_de_meniscos_estiramiento_cuadriceps", "15-20 seg x 2-3 veces"),
+                            Ejercicio("Elevación de talones", "lesion_de_meniscos_elevacion_de_talones", "10-15 repeticiones"),
+                            Ejercicio("Deslizamiento de talón", "lesion_de_meniscos_deslizamiento_de_talones", "10-15 repeticiones")
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .widthIn(max = 420.dp)
+                                .align(Alignment.CenterHorizontally),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                ejercicios.forEach { ejercicio ->
+                                    val drawableId = getDrawableIdByName(ejercicio.nombreImagen)
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(vertical = 8.dp)) {
+                                        Text(text = "${ejercicio.nombre}  |  ${ejercicio.repeticiones}", style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        if (drawableId != 0) {
+                                            Image(
+                                                painter = painterResource(id = drawableId),
+                                                contentDescription = ejercicio.nombre,
+                                                modifier = Modifier.size(192.dp)
+                                            )
+                                        } else {
+                                            Spacer(modifier = Modifier.size(192.dp))
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     // Aquí puedes agregar más lesiones y rutinas si lo deseas
                 }
             } else if (muscleTabs[selectedTabIndex] == "Dificultad Médica") {
@@ -184,6 +257,41 @@ fun RecommendedExercisesScreen(
                             Ejercicio("Estiramiento de piriforme", "problemas_de_espalda_estiramiento_piriforme", "20-30 seg por lado"),
                             Ejercicio("Rotación de tronco", "problemas_de_espalda_rotacion_de_tronco", "5-10 por lado"),
                             Ejercicio("Puente", "problemas_de_espalda_puente", "10-15 repeticiones")
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .widthIn(max = 420.dp)
+                                .align(Alignment.CenterHorizontally),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                ejercicios.forEach { ejercicio ->
+                                    val drawableId = getDrawableIdByName(ejercicio.nombreImagen)
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(vertical = 8.dp)) {
+                                        Text(text = "${ejercicio.nombre}  |  ${ejercicio.repeticiones}", style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        if (drawableId != 0) {
+                                            Image(
+                                                painter = painterResource(id = drawableId),
+                                                contentDescription = ejercicio.nombre,
+                                                modifier = Modifier.size(192.dp)
+                                            )
+                                        } else {
+                                            Spacer(modifier = Modifier.size(192.dp))
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    "Tendinitis" -> {
+                        val ejercicios = listOf(
+                            Ejercicio("Flexión y extensión de muñeca", "tendinitis_flexion_y_extension_de_muneca", "15-20 seg x 2-3 veces"),
+                            Ejercicio("Estiramientos de tendones", "tendinitis_estiramientos_de_tedones", "15-20 seg x 2-3 veces"),
+                            Ejercicio("Flexiones de rodillas", "tendinitis_flexiones_de_rodillas", "10-15 repeticiones"),
+                            Ejercicio("Elevación de talones", "tendinitis_elevacion_de_talones", "10-15 repeticiones"),
+                            Ejercicio("Deslizamiento de tobillos", "tendinitis_deslizamiento_de_tobillos", "10-15 repeticiones")
                         )
                         Box(
                             modifier = Modifier

@@ -42,7 +42,7 @@ fun UserDataScreen(
     val fitnessLevels = listOf("Principiante", "Intermedio", "Avanzado")
     val mainGoals = listOf("Pérdida de peso", "Aumento de masa muscular", "Mejora de resistencia")
     val activityLevels = listOf("Sedentario", "Moderado", "Activo")
-    val objetivos = listOf("Aumentar peso", "Aumentar músculo", "Mantenerse en forma")
+    val objetivos = listOf("Bajar peso", "Aumentar músculo", "Mantenerse en forma")
 
     var objetivo by remember { mutableStateOf(userProfile?.motivation ?: "") }
     var expandedObjetivo by remember { mutableStateOf(false) }
@@ -55,7 +55,6 @@ fun UserDataScreen(
     val opcionesLesion = listOf(
         "No",
         "Esguince",
-        "Recuperación de fracturas",
         "Luxaciones",
         "Lesiones de meniscos"
     )
@@ -82,7 +81,7 @@ fun UserDataScreen(
         if (mainGoal == "Aumento de masa muscular") score += 2
         if (mainGoal == "Mejora de resistencia") score += 1
         if (objetivo == "Aumentar músculo") score += 2
-        if (objetivo == "Aumentar peso") score += 1
+        if (objetivo == "Bajar peso") score += 1 // Cambiado de "Aumentar peso" a "Bajar peso"
         if (objetivo == "Mantenerse en forma") score += 1
         // Puntaje por nivel de actividad
         score += when (activityLevel) {
