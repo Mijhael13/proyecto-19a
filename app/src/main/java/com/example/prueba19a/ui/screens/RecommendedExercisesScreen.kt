@@ -25,6 +25,8 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.res.ResourcesCompat
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.navigationBarsPadding
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,6 +62,7 @@ fun RecommendedExercisesScreen(
     }
     var selectedTabIndex by remember { mutableStateOf(0) }
     val scrollState = rememberScrollState()
+    val isDark = isSystemInDarkTheme()
 
     Box {
         Column(
@@ -67,7 +70,8 @@ fun RecommendedExercisesScreen(
                 .fillMaxSize()
                 .verticalScroll(scrollState)
                 .padding(top = 32.dp, start = 24.dp, end = 24.dp, bottom = 24.dp)
-                .background(MaterialTheme.colorScheme.surface),
+                .background(MaterialTheme.colorScheme.surface)
+                .navigationBarsPadding(),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -81,16 +85,27 @@ fun RecommendedExercisesScreen(
                 }
             }
 
-            Text(text = "Ejercicios Recomendados", style = MaterialTheme.typography.titleLarge.copy(color = Color.Black))
+            Text(
+                text = "Ejercicios Recomendados",
+                style = MaterialTheme.typography.titleLarge.copy(color = if (isDark) Color.White else Color.Black)
+            )
             Spacer(modifier = Modifier.height(16.dp))
 
             // Menú de navegación de grupos musculares
-            ScrollableTabRow(selectedTabIndex = selectedTabIndex, contentColor = Color.Black) {
+            ScrollableTabRow(
+                selectedTabIndex = selectedTabIndex,
+                contentColor = if (isDark) Color.White else Color.Black
+            ) {
                 muscleTabs.forEachIndexed { index, title ->
                     Tab(
                         selected = selectedTabIndex == index,
                         onClick = { selectedTabIndex = index },
-                        text = { Text(title, color = if (selectedTabIndex == index) Color.Black else LocalContentColor.current) }
+                        text = {
+                            Text(
+                                title,
+                                color = if (selectedTabIndex == index) (if (isDark) Color.White else Color.Black) else LocalContentColor.current
+                            )
+                        }
                     )
                 }
             }
@@ -363,8 +378,9 @@ fun RecommendedExercisesScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Volver")
+                Text("Volver", color = Color.White)
             }
+            Spacer(modifier = Modifier.height(32.dp)) // Espacio extra para evitar la barra de navegación
         }
 
         if (showUserProfile) {
@@ -384,6 +400,7 @@ fun RecommendedExercisesScreen(
                     Button(onClick = { showUserProfile = false }, colors = ButtonDefaults.buttonColors(containerColor = Color.Black), modifier = Modifier.fillMaxWidth()) {
                         Text("Cerrar", color = Color.White)
                     }
+                    Spacer(modifier = Modifier.height(32.dp)) // Espacio extra para evitar la barra de navegación
                 }
             }
         }

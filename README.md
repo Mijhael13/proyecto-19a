@@ -22,13 +22,6 @@ Esta aplicación móvil está diseñada para recomendar rutinas de ejercicio per
 
 La app calcula un puntaje basado en los datos del usuario y selecciona la dificultad y tipo de ejercicios más adecuados. Si el usuario indica alguna lesión, enfermedad o dificultad médica, la rutina se adapta automáticamente para priorizar la seguridad y la recuperación.
 
-## Cómo cambiar el ícono de la app
-
-1. Coloca tu imagen en `app/src/main/res/drawable/` (por ejemplo, `icono.jpeg`).
-2. Usa un generador de íconos de Android para crear los archivos `ic_launcher.png` en las carpetas `mipmap-*`.
-3. Reemplaza los archivos existentes en las carpetas `mipmap-*`.
-4. No cambies la referencia en el `AndroidManifest.xml` (debe ser `@mipmap/ic_launcher`).
-
 ## Requisitos
 
 - Android Studio Bumblebee o superior

@@ -16,6 +16,8 @@ import androidx.compose.foundation.background
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.TextField
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.navigationBarsPadding
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,6 +75,8 @@ fun UserDataScreen(
         "Tendinitis",
         "Problemas de espalda"
     )
+
+    val isDark = isSystemInDarkTheme()
 
     fun updateScore() {
         score = 0
@@ -134,7 +138,8 @@ fun UserDataScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(start = 24.dp, end = 24.dp, top = 48.dp, bottom = 24.dp)
-            .background(MaterialTheme.colorScheme.surface),
+            .background(MaterialTheme.colorScheme.surface)
+            .navigationBarsPadding(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -184,7 +189,7 @@ fun UserDataScreen(
                             objetivo = option
                             expandedObjetivo = false
                         },
-                        modifier = if (objetivo == option) Modifier.background(Color(0xFFE0E0E0)) else Modifier
+                        modifier = if (objetivo == option) Modifier.background(if (isDark) Color.Black else Color(0xFFE0E0E0)) else Modifier
                     )
                 }
             }
@@ -216,7 +221,7 @@ fun UserDataScreen(
                             activityLevel = option
                             expandedActivityLevelCombo = false
                         },
-                        modifier = if (activityLevel == option) Modifier.background(Color(0xFFE0E0E0)) else Modifier
+                        modifier = if (activityLevel == option) Modifier.background(if (isDark) Color.Black else Color(0xFFE0E0E0)) else Modifier
                     )
                 }
             }
@@ -266,7 +271,7 @@ fun UserDataScreen(
                             lesion = option
                             expandedLesion = false
                         },
-                        modifier = if (lesion == option) Modifier.background(Color(0xFFE0E0E0)) else Modifier
+                        modifier = if (lesion == option) Modifier.background(if (isDark) Color.Black else Color(0xFFE0E0E0)) else Modifier
                     )
                 }
             }
@@ -298,7 +303,7 @@ fun UserDataScreen(
                             enfermedad = option
                             expandedEnfermedad = false
                         },
-                        modifier = if (enfermedad == option) Modifier.background(Color(0xFFE0E0E0)) else Modifier
+                        modifier = if (enfermedad == option) Modifier.background(if (isDark) Color.Black else Color(0xFFE0E0E0)) else Modifier
                     )
                 }
             }
@@ -330,7 +335,7 @@ fun UserDataScreen(
                             dificultadMedica = option
                             expandedDificultadMedica = false
                         },
-                        modifier = if (dificultadMedica == option) Modifier.background(Color(0xFFE0E0E0)) else Modifier
+                        modifier = if (dificultadMedica == option) Modifier.background(if (isDark) Color.Black else Color(0xFFE0E0E0)) else Modifier
                     )
                 }
             }
@@ -363,5 +368,6 @@ fun UserDataScreen(
         ) {
             Text("Enviar", color = Color.White)
         }
+        Spacer(modifier = Modifier.height(32.dp)) // Espacio extra para evitar la barra de navegación
     }
 }
